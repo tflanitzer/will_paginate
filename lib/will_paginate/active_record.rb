@@ -216,7 +216,7 @@ module WillPaginate
           query = sanitize_sql(sql.dup)
           original_query = query.dup
           oracle = self.connection.adapter_name =~ /^(oracle|oci$)/i
-          sqlserver = self.connection.adapter_name.downcase == 'sqlserver'
+          sqlserver = self.connection.adapter_name =~ /sqlserver|mssql/i
 
           # add limit, offset
           if oracle
