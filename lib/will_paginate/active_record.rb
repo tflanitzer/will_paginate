@@ -216,6 +216,7 @@ module WillPaginate
           query = sanitize_sql(sql.dup)
           original_query = query.dup
           oracle = self.connection.adapter_name =~ /^(oracle|oci$)/i
+          sqlserver = self.connection.adapter_name.downcase == 'sqlserver'
 
           # add limit, offset
           if oracle
@@ -225,6 +226,8 @@ module WillPaginate
                 WHERE rownum <= #{pager.offset + pager.per_page}
               ) WHERE rnum >= #{pager.offset}
             SQL
+          elsif sqlserver
+             query << " OFFSET #{pager.offset} ROWS FETCH NEXT #{pager.per_page} ROWS ONLY"
           else
             query << " LIMIT #{pager.per_page} OFFSET #{pager.offset}"
           end
